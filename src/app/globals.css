@@ -1,0 +1,288 @@
+@import "tailwindcss";
+
+:root {
+  /* Light theme colors (HSL triplets for Tailwind v4 @theme) */
+  --background: 0 0% 100%; /* Pure White */
+  --foreground: 0 0% 3.9%; /* Near Black */
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 3.9%;
+  --primary: 0 0% 9%; /* Dark for primary text */
+  --primary-foreground: 0 0% 98%;
+  --secondary: 0 0% 96.1%; /* Light Gray */
+  --secondary-foreground: 0 0% 9%;
+  --muted: 0 0% 96.1%; /* Light Gray */
+  --muted-foreground: 0 0% 45.1%; /* Medium Gray */
+  --accent: 346 77% 49.8%; /* Pink accent #ec4899 equivalent */
+  --accent-foreground: 0 0% 9%;
+  --destructive: 0 84.2% 60.2%; /* Red */
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 89.8%;
+  --input: 0 0% 89.8%;
+  --ring: 346 77% 49.8%; /* Pink accent ring */
+  --radius: 0.5rem;
+
+  /* Custom tech portfolio colors */
+  --pink-primary: 346 77% 49.8%; /* #ec4899 */
+  --pink-vibrant: 348 83% 47%; /* #FF1744 */
+  --red-highlight: 0 100% 62%; /* #FF3838 */
+  --red-secondary: 0 71% 51%; /* #ef4444 */
+  --dark-bg: 0 0% 3.9%; /* #0a0a0a */
+  --dark-surface: 0 0% 8.5%; /* #161616 */
+  --gray-light: 0 0% 45.1%; /* #737373 */
+  --gray-dark: 0 0% 20%; /* #333333 */
+}
+
+.dark {
+  /* Dark theme colors (HSL) - Primary theme for tech portfolio */
+  --background: 0 0% 3.9%; /* Very Dark #0a0a0a */
+  --foreground: 0 0% 98%; /* Near White */
+  --card: 0 0% 8.5%; /* Dark Surface #161616 */
+  --card-foreground: 0 0% 98%;
+  --popover: 0 0% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 0 0% 3.9%;
+  --secondary: 0 0% 14.9%; /* Dark Gray */
+  --secondary-foreground: 0 0% 98%;
+  --muted: 0 0% 14.9%;
+  --muted-foreground: 0 0% 63.9%; /* Light Gray */
+  --accent: 346 77% 49.8%; /* Pink accent #ec4899 */
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%; /* Dark Red */
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 14.9%;
+  --input: 0 0% 14.9%;
+  --ring: 346 77% 49.8%; /* Pink accent ring */
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-pink-primary: hsl(var(--pink-primary));
+  --color-pink-vibrant: hsl(var(--pink-vibrant));
+  --color-red-highlight: hsl(var(--red-highlight));
+  --color-red-secondary: hsl(var(--red-secondary));
+  --color-dark-bg: hsl(var(--dark-bg));
+  --color-dark-surface: hsl(var(--dark-surface));
+  --color-gray-light: hsl(var(--gray-light));
+  --color-gray-dark: hsl(var(--gray-dark));
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Custom utility classes */
+.geometric-bg {
+  background-image:
+    linear-gradient(45deg, rgba(236, 72, 153, 0.1) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(236, 72, 153, 0.1) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(236, 72, 153, 0.1) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(236, 72, 153, 0.1) 75%);
+  background-size: 60px 60px;
+  background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+}
+
+/* Sacred Geometry Animations */
+.sacred-geometry-container {
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.sacred-geometry-element {
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+/* Performance optimizations for animations */
+@media (prefers-reduced-motion: reduce) {
+  .sacred-geometry-container * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Ensure smooth rendering on different devices */
+@supports (backdrop-filter: blur(1px)) {
+  .sacred-geometry-backdrop {
+    backdrop-filter: blur(0.5px);
+  }
+}
+
+/* Full-page Flower of Life background optimizations */
+.flower-of-life-background {
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+/* Ensure content appears above background */
+.content-layer {
+  position: relative;
+  z-index: 10;
+}
+
+/* Smooth transitions for background elements */
+.flower-pattern-element {
+  will-change: transform, opacity;
+  transform-origin: center center;
+}
+
+/* Performance optimization for large SVG patterns */
+.flower-svg-pattern {
+  shape-rendering: geometricPrecision;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Ensure proper layering hierarchy */
+.background-layer { z-index: 0; }
+.content-layer { z-index: 10; }
+.header-layer { z-index: 50; }
+.modal-layer { z-index: 100; }
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Portfolio-specific styles */
+.portfolio-container {
+  @apply container mx-auto px-4;
+}
+
+.portfolio-section {
+  @apply py-16 md:py-20 lg:py-24 my-16 md:my-20 lg:my-24;
+}
+
+.portfolio-header {
+  @apply text-center mb-12 md:mb-16;
+}
+
+.portfolio-title {
+  @apply text-3xl md:text-4xl lg:text-5xl font-bold mb-4;
+}
+
+.portfolio-subtitle {
+  @apply text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto;
+}
+
+/* Project card styles */
+.project-card {
+  @apply relative overflow-hidden rounded-lg bg-card border border-border transition-all duration-300 hover:shadow-xl hover:shadow-pink-primary/20 hover:-translate-y-2;
+}
+
+.project-image {
+  @apply w-full h-full object-cover transition-transform duration-500 group-hover:scale-105;
+}
+
+.project-overlay {
+  @apply absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300;
+}
+
+.project-info {
+  @apply absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300;
+}
+
+/* Button variants */
+.btn-primary {
+  @apply bg-pink-primary hover:bg-pink-primary/90 text-white font-medium px-6 py-3 rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-pink-primary/25 hover:-translate-y-0.5;
+}
+
+.btn-secondary {
+  @apply border border-pink-primary text-pink-primary hover:bg-pink-primary hover:text-white font-medium px-6 py-3 rounded-lg transition-all duration-200;
+}
+
+/* Typography styles */
+.heading-primary {
+  @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+}
+
+.heading-secondary {
+  @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight;
+}
+
+.heading-tertiary {
+  @apply text-2xl md:text-3xl lg:text-4xl font-semibold tracking-tight;
+}
+
+/* Layout utilities */
+.section-padding {
+  @apply py-16 md:py-20 lg:py-24;
+}
+
+.container-padding {
+  @apply px-4 md:px-6 lg:px-8;
+}
+
+/* Focus states for accessibility */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-pink-primary focus:ring-offset-2 focus:ring-offset-background;
+}
+
+/* Loading states */
+.skeleton {
+  @apply animate-pulse bg-muted rounded;
+}
+
+.skeleton-text {
+  @apply animate-pulse bg-muted rounded h-4 w-full;
+}
+
+.skeleton-title {
+  @apply animate-pulse bg-muted rounded h-6 w-3/4;
+}
+
+.skeleton-image {
+  @apply animate-pulse bg-muted rounded aspect-square w-full;
+}
+
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--pink-primary));
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--pink-primary) / 0.8);
+}

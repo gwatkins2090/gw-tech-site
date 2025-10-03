@@ -1,0 +1,30 @@
+
+> site-and-shop@0.1.0 build C:\Users\gwatkins\dev\apps\techportfolio
+> next build --turbopack
+
+   ▲ Next.js 15.5.3 (Turbopack)
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+   Creating an optimized production build ...
+ ✓ Finished writing to disk in 1006ms
+ ✓ Compiled successfully in 10.0s
+   Linting and checking validity of types ...
+Failed to compile.
+
+./src/components/portfolio/project-detail-modal.tsx:56:28
+Type error: Conversion of type 'typeof import("C:/Users/gwatkins/dev/apps/techportfolio/node_modules/.pnpm/lucide-react@0.468.0_react@19.1.0/node_modules/lucide-react/dist/lucide-react")' to type 'Record<string, LucideIcon>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'Icon' is incompatible with index signature.
+    Type 'ForwardRefExoticComponent<Omit<IconComponentProps, "ref"> & RefAttributes<SVGSVGElement>>' is not comparable to type 'LucideIcon'.
+      Type 'Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>' is not comparable to type 'Omit<IconComponentProps, "ref"> & RefAttributes<SVGSVGElement>'.
+        Property 'iconNode' is missing in type 'Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>' but required in type 'Omit<IconComponentProps, "ref">'.
+
+[0m [90m 54 |[39m
+ [90m 55 |[39m   [36mconst[39m getIcon [33m=[39m (iconName[33m:[39m string) [33m=>[39m {
+[31m[1m>[22m[39m[90m 56 |[39m     [36mconst[39m [33mIconComponent[39m [33m=[39m ([33mIcons[39m [36mas[39m [33mRecord[39m[33m<[39m[33mstring[39m[33m,[39m [33mLucideIcon[39m[33m>[39m)[iconName][33m;[39m
+ [90m    |[39m                            [31m[1m^[22m[39m
+ [90m 57 |[39m     [36mif[39m ([33m![39m[33mIconComponent[39m) [36mreturn[39m [36mnull[39m[33m;[39m
+ [90m 58 |[39m     [36mreturn[39m [33m<[39m[33mIconComponent[39m className[33m=[39m[32m"h-5 w-5"[39m [33m/[39m[33m>[39m[33m;[39m
+ [90m 59 |[39m   }[33m;[39m[0m
+Next.js build worker exited with code: 1 and signal: null
+ ELIFECYCLE  Command failed with exit code 1.

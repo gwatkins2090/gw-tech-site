@@ -1,0 +1,9 @@
+
+> site-and-shop@0.1.0 build C:\Users\gwatkins\dev\apps\techportfolio
+> next build --turbopack
+
+   ▲ Next.js 15.5.3 (Turbopack)
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+   Creating an optimized production build ...
