@@ -76,16 +76,16 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="font-medium">Information</h4>
             <nav className="flex flex-col space-y-2 text-sm">
-              <Link href="/shop" className="hover:text-gallery-gold transition-colors">
-                Browse Artworks
+              <Link href="/documentation" className="hover:text-pink-primary transition-colors">
+                Documentation
               </Link>
-              <Link href="/shipping" className="hover:text-gallery-gold transition-colors">
+              <Link href="/shipping" className="hover:text-pink-primary transition-colors">
                 Shipping Info
               </Link>
-              <Link href="/terms" className="hover:text-gallery-gold transition-colors">
+              <Link href="/terms" className="hover:text-pink-primary transition-colors">
                 Terms of Service
               </Link>
-              <Link href="/privacy" className="hover:text-gallery-gold transition-colors">
+              <Link href="/privacy" className="hover:text-pink-primary transition-colors">
                 Privacy Policy
               </Link>
             </nav>

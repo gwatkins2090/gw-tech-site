@@ -26,7 +26,7 @@ const AboutSection = () => {
   };
 
   return (
-    <section id="about" className="portfolio-section bg-background/8 backdrop-blur-[2px]">
+    <section id="about" className="portfolio-section">
       <div className="portfolio-container">
         <motion.div
           variants={containerVariants}
@@ -46,18 +46,18 @@ const AboutSection = () => {
             {/* Profile Image and Info */}
             <motion.div variants={itemVariants} className="space-y-6">
               <div className="relative">
-                <div className="relative w-80 h-80 mx-auto lg:mx-0 rounded-2xl overflow-hidden">
+                <div className="relative w-80 h-80 mx-auto lg:mx-0 rounded-2xl overflow-hidden bg-gradient-to-br from-pink-primary/10 to-pink-vibrant/10">
                   <Image
                     src={personalInfo.profileImage}
                     alt={personalInfo.name}
                     fill
                     className="object-cover"
                     sizes="(max-width: 1024px) 320px, 320px"
+                    priority
                   />
                 </div>
-                {/* Decorative elements */}
-                <div className="absolute -top-4 -right-4 w-24 h-24 border-2 border-pink-primary/30 rounded-lg -z-10" />
-                <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-pink-vibrant/20 rounded-full -z-10" />
+                {/* Decorative elements - TEMPORARILY REMOVED TO DEBUG GREEN BOX */}
+                {/* <div className="absolute -top-4 -right-4 w-24 h-24 border-2 border-pink-primary/30 rounded-lg -z-10 bg-transparent" /> */}
               </div>
 
               {/* Quick Info Cards */}

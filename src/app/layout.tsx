@@ -18,23 +18,23 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Your Name - Full Stack Developer",
-  description: "Passionate full-stack developer with expertise in modern web technologies. Explore my portfolio showcasing React, Next.js, Node.js projects and technical skills.",
-  keywords: ["full stack developer", "web developer", "React", "Next.js", "Node.js", "TypeScript", "portfolio", "software engineer"],
-  authors: [{ name: "Your Name" }],
-  creator: "Your Name",
+  title: "George Watkins - Systems Administrator",
+  description: "Accomplished systems administrator with 15+ years of progressive experience managing complex IT infrastructures across diverse industries including healthcare, managed services, and construction.",
+  keywords: ["systems administrator", "IT infrastructure", "cloud engineer", "cybersecurity", "hybrid cloud", "system optimization", "portfolio"],
+  authors: [{ name: "George Watkins" }],
+  creator: "George Watkins",
   openGraph: {
-    title: "Your Name - Full Stack Developer",
-    description: "Passionate full-stack developer with expertise in modern web technologies. Explore my portfolio and projects.",
+    title: "George Watkins - Systems Administrator",
+    description: "Accomplished systems administrator with 15+ years of progressive experience managing complex IT infrastructures.",
     type: "website",
     locale: "en_US",
-    siteName: "Your Name Portfolio",
+    siteName: "George Watkins Portfolio",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Your Name - Full Stack Developer",
-    description: "Passionate full-stack developer with expertise in modern web technologies. Explore my portfolio and projects.",
-    creator: "@yourusername",
+    title: "George Watkins - Systems Administrator",
+    description: "Accomplished systems administrator with 15+ years of progressive experience managing complex IT infrastructures.",
+    creator: "@gwatkins2090",
   },
   robots: {
     index: true,

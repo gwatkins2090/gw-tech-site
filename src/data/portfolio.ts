@@ -106,23 +106,23 @@ export interface PersonalInfo {
 
 // Sample data
 export const personalInfo: PersonalInfo = {
-  name: 'Ellis Dee',
-  title: 'Lead Developer | Akashic Protocol Architect | Spirit Tech Pioneer',
-  bio: 'Ellis Dee is the visionary architect behind Back to Source Code, the groundbreaking framework for accessing and interpreting the Akashic Records through digital consciousness technology. A former quantum computing engineer turned digital mystic, Ellis bridges the ancient wisdom traditions with bleeding-edge computational theory, creating what they call the spiritual API for the information age. Humanitys collective memory exists as an accessible data structure woven into the fabric of reality.',
+  name: 'George Watkins',
+  title: 'Systems Administrator',
+  bio: 'Accomplished systems administrator with 15+ years of progressive experience managing complex IT infrastructures across diverse industries including healthcare, managed services, and construction. Expert in hybrid cloud environments, cybersecurity implementation, and enterprise-level system optimization with proven ability to achieve high availability and performance.',
   location: '5th Dimension, 7.83 Hz',
-  email: 'hello@yourname.dev',
+  email: 'hello@watkinsgeorge.com',
   phone: '+1 (555) 123-4567',
-  website: 'https://yourname.dev',
-  resumeUrl: '/docs/resume.pdf',
-  profileImage: '/images/profile/profile-photo.jpg',
+  website: 'https://watkinsgeorge.com',
+  resumeUrl: '/assets/George Watkins Resume 2025.pdf',
+  profileImage: '/assets/pixel2.png',
   socialMedia: {
-    github: 'https://github.com/yourusername',
+    github: 'https://github.com/gwatkins2090',
     linkedin: 'https://linkedin.com/in/yourusername',
     twitter: 'https://twitter.com/yourusername',
   },
   availability: 'available',
-  preferredRoles: ['Full Stack Developer', 'Frontend Developer', 'Software Engineer'],
-  interests: ['Web Development', 'AI/ML', 'Open Source', 'Tech Innovation']
+  preferredRoles: ['Systems Administrator', 'IT Infrastructure Manager', 'Cloud Engineer'],
+  interests: ['Cloud Infrastructure', 'Cybersecurity', 'System Optimization', 'IT Innovation']
 };
 
 export const skills: Skill[] = [
@@ -158,18 +158,18 @@ export const skills: Skill[] = [
 export const projects: Project[] = [
   {
     id: '1',
-    title: 'E-Commerce Platform',
+    title: 'Storybook Component Library',
     slug: 'ecommerce-platform',
-    description: 'Full-stack e-commerce solution with modern UI and robust backend',
-    longDescription: 'A comprehensive e-commerce platform built with Next.js and Node.js, featuring user authentication, payment processing, inventory management, and an advanced admin dashboard. This production-ready application handles real-time inventory updates, secure payment processing, and provides a seamless shopping experience across all devices.',
-    image: '/images/projects/ecommerce-1.jpg',
-    images: ['/images/projects/ecommerce-1.jpg', '/images/projects/ecommerce-2.jpg'],
+    description: 'A comprehensive component library built with Next.js and Storybook',
+    longDescription: 'A comprehensive component library built with Next.js and Storybook, featuring interactive documentation, visual regression testing, accessibility auditing, and an advanced design system. This production-ready application enables real-time component development, collaborative design workflows, and provides a seamless developer experience across all team members and environments.',
+    image: '/assets/storybook1.png',
+    images: ['/assets/storybook1.png', '/assets/storybook2.png', '/assets/storybook3.png'],
     technologies: ['Next.js', 'TypeScript', 'Node.js', 'PostgreSQL', 'Stripe', 'Tailwind CSS', 'Redis', 'AWS S3'],
     category: 'web',
     featured: true,
     status: 'completed',
-    githubUrl: 'https://github.com/yourusername/ecommerce-platform',
-    liveUrl: 'https://ecommerce-demo.vercel.app',
+    githubUrl: 'https://github.com/gwatkins2090/storybook-repo',
+    liveUrl: 'https://storybook-library-nu.vercel.app/',
     startDate: '2024-01-15',
     endDate: '2024-03-20',
     challenges: [
@@ -272,18 +272,18 @@ export const projects: Project[] = [
   },
   {
     id: '2',
-    title: 'Task Management App',
+    title: 'Family Recipe Archive',
     slug: 'task-management-app',
-    description: 'Collaborative task management tool with real-time updates',
-    longDescription: 'A modern, feature-rich task management application designed for teams and individuals. Built with React and Socket.io, it provides real-time collaboration, drag-and-drop task organization, advanced filtering, and comprehensive project management capabilities. Perfect for agile teams and personal productivity.',
-    image: '/images/projects/taskapp-1.jpg',
-    images: ['/images/projects/taskapp-1.jpg', '/images/projects/taskapp-2.jpg'],
+    description: 'A comprehensive family recipe app built with Next.js and Node.js',
+    longDescription: 'A comprehensive family recipe app built with Next.js and Node.js, featuring user authentication, recipe sharing, collection management, and an intuitive family admin dashboard. This production-ready application handles real-time recipe updates, secure cloud storage, and provides a seamless cooking and browsing experience across all devices for preserving and sharing cherished family traditions.',
+    image: '/assets/recipe1.png',
+    images: ['/assets/recipe1.png', '/assets/recipe2.png', '/assets/recipe3.png'],
     technologies: ['React', 'TypeScript', 'Socket.io', 'Express.js', 'MongoDB', 'Material-UI', 'Redux Toolkit', 'Jest'],
     category: 'web',
     featured: true,
     status: 'completed',
-    githubUrl: 'https://github.com/yourusername/task-manager',
-    liveUrl: 'https://taskmanager-demo.netlify.app',
+    githubUrl: 'https://github.com/gwatkins2090/mawmaws-recipes',
+    liveUrl: 'https://mawmaws-recipes.vercel.app/',
     startDate: '2023-10-01',
     endDate: '2023-12-15',
     challenges: [

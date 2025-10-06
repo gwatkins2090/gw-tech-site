@@ -10,7 +10,10 @@ import {
   ImageIcon,
   ShoppingBag,
   User,
-  Mail
+  Mail,
+  Link2,
+  Home,
+  Radio
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useMobile } from '@/hooks/use-mobile';
@@ -21,11 +24,13 @@ const Header = () => {
   const isMobile = useMobile();
 
   const navigationItems = [
-    { href: '#home', label: 'Home', icon: null },
-    { href: '#about', label: 'About', icon: User },
-    { href: '#skills', label: 'Skills', icon: ImageIcon },
-    { href: '#projects', label: 'Projects', icon: ShoppingBag },
-    { href: '#contact', label: 'Contact', icon: Mail },
+    { href: '/home', label: 'Home', icon: Home },
+    { href: '/about', label: 'About', icon: User },
+    { href: '/skills', label: 'Skills', icon: ImageIcon },
+    { href: '/projects', label: 'Projects', icon: ShoppingBag },
+    { href: '/contact', label: 'Contact', icon: Mail },
+    { href: '/stations', label: 'Radio', icon: Radio },
+    { href: '/links', label: 'Links', icon: Link2 },
   ];
 
   const menuVariants = {
@@ -67,12 +72,12 @@ const Header = () => {
     <header className={`sticky top-0 z-50 w-full border-b ${isMenuOpen && isMobile ? 'bg-background backdrop-blur-md' : 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'}`}>
       <div className="container flex h-16 items-center justify-between">
         {/* Logo/Brand */}
-        <Link href="#home" className="flex items-center space-x-3">
+        <Link href="/home" className="flex items-center space-x-3">
           <div className="w-8 h-8 bg-gradient-to-br from-pink-primary to-pink-vibrant rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">YN</span>
+            <span className="text-white font-bold text-sm">GW</span>
           </div>
           <span className="font-bold text-xl bg-gradient-to-r from-pink-primary to-pink-vibrant bg-clip-text text-transparent">
-            Your Name
+            George Watkins
           </span>
         </Link>
 
