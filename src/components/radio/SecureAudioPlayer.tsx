@@ -1,10 +1,15 @@
 'use client';
 
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
 
 // ============================================================================
 // TYPES
 // ============================================================================
+
+export interface SecureAudioPlayerHandle {
+  play: () => void;
+  pause: () => void;
+}
 
 export interface SecureAudioPlayerProps {
   stationId: string;
@@ -28,14 +33,18 @@ interface AudioState {
 // SECURE AUDIO PLAYER COMPONENT
 // ============================================================================
 
-export default function SecureAudioPlayer({
-  stationId,
-  isActive,
-  isPoweredOn,
-  onPlay,
-  onError,
-  onAudioData,
-}: SecureAudioPlayerProps) {
+const SecureAudioPlayer = forwardRef<SecureAudioPlayerHandle, SecureAudioPlayerProps>(
+  function SecureAudioPlayer(
+    {
+      stationId,
+      isActive,
+      isPoweredOn,
+      onPlay,
+      onError,
+      onAudioData,
+    },
+    ref
+  ) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -45,6 +54,10 @@ export default function SecureAudioPlayer({
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const reconnectAttemptsRef = useRef(0);
 
+  // Refs to prevent double-loading and track ready state
+  const isLoadingRef = useRef(false);
+  const isReadyRef = useRef(false);
+
   const [state, setState] = useState<AudioState>({
     isPlaying: false,
     isLoading: false,
@@ -53,6 +66,139 @@ export default function SecureAudioPlayer({
     error: null,
     hasInteracted: false,
   });
+
+  // ============================================================================
+  // EXPOSE PLAY/PAUSE METHODS VIA REF
+  // ============================================================================
+
+  useImperativeHandle(ref, () => ({
+    play: () => {
+      console.log('[SecureAudioPlayer] play() called', {
+        stationId,
+        isActive,
+        isPoweredOn,
+        hasAudio: !!audioRef.current,
+        audioSrc: audioRef.current?.src,
+        audioContextState: audioContextRef.current?.state,
+        isReady: isReadyRef.current,
+        isLoading: isLoadingRef.current
+      });
+
+      const audio = audioRef.current;
+      if (!audio) {
+        console.error('[SecureAudioPlayer] Cannot play: audio element is null');
+        return;
+      }
+
+      if (!isActive) {
+        console.error('[SecureAudioPlayer] Cannot play: component is not active');
+        return;
+      }
+
+      if (!isPoweredOn) {
+        console.error('[SecureAudioPlayer] Cannot play: radio is not powered on');
+        return;
+      }
+
+      // Resume audio context if suspended (required for autoplay policy)
+      if (audioContextRef.current?.state === 'suspended') {
+        console.log('[SecureAudioPlayer] Resuming suspended AudioContext');
+        audioContextRef.current.resume().catch((err) => {
+          console.error('[SecureAudioPlayer] Failed to resume AudioContext:', err);
+        });
+      }
+
+      // Log audio element state before playing
+      console.log('[SecureAudioPlayer] Audio element state before play():', {
+        readyState: audio.readyState,
+        networkState: audio.networkState,
+        paused: audio.paused,
+        currentTime: audio.currentTime,
+        duration: audio.duration,
+        src: audio.src
+      });
+
+      // Check if audio is ready
+      if (audio.readyState < 3) {
+        console.warn('[SecureAudioPlayer] ⚠️ Audio not ready yet (readyState < 3), waiting for canplay event...');
+
+        // Wait for canplay event before playing
+        const playWhenReady = () => {
+          console.log('[SecureAudioPlayer] canplay event fired, now calling play()');
+          audio.play()
+            .then(() => {
+              console.log('[SecureAudioPlayer] ✅ audio.play() promise resolved successfully!');
+
+              // Log detailed audio state after play
+              setTimeout(() => {
+                console.log('[SecureAudioPlayer] Audio state after play():', {
+                  paused: audio.paused,
+                  currentTime: audio.currentTime,
+                  volume: audio.volume,
+                  muted: audio.muted,
+                  readyState: audio.readyState,
+                  audioContextState: audioContextRef.current?.state,
+                  gainValue: gainNodeRef.current?.gain.value
+                });
+              }, 100);
+
+              setState(prev => ({ ...prev, isPlaying: true, hasInteracted: true }));
+              if (onPlay) onPlay();
+            })
+            .catch((err) => {
+              console.error('[SecureAudioPlayer] ❌ audio.play() promise rejected:', err);
+              if (onError) onError(err instanceof Error ? err.message : 'Failed to play stream');
+            });
+        };
+
+        audio.addEventListener('canplay', playWhenReady, { once: true });
+        return;
+      }
+
+      // Audio is ready, play immediately
+      console.log('[SecureAudioPlayer] Audio is ready (readyState >= 3), calling audio.play()...');
+      const playPromise = audio.play();
+
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            console.log('[SecureAudioPlayer] ✅ audio.play() promise resolved successfully!');
+
+            // Log detailed audio state after play
+            setTimeout(() => {
+              console.log('[SecureAudioPlayer] Audio state after play():', {
+                paused: audio.paused,
+                currentTime: audio.currentTime,
+                volume: audio.volume,
+                muted: audio.muted,
+                readyState: audio.readyState,
+                audioContextState: audioContextRef.current?.state,
+                gainValue: gainNodeRef.current?.gain.value
+              });
+            }, 100);
+          })
+          .catch((err) => {
+            console.error('[SecureAudioPlayer] ❌ audio.play() promise rejected:', err);
+            console.error('[SecureAudioPlayer] Error name:', err.name);
+            console.error('[SecureAudioPlayer] Error message:', err.message);
+            if (onError) onError(err instanceof Error ? err.message : 'Failed to play stream');
+          });
+      } else {
+        console.warn('[SecureAudioPlayer] ⚠️ audio.play() returned undefined (old browser?)');
+      }
+
+      setState(prev => ({ ...prev, isPlaying: true, hasInteracted: true }));
+      if (onPlay) onPlay();
+    },
+    pause: () => {
+      const audio = audioRef.current;
+      if (!audio) return;
+
+      console.log('[SecureAudioPlayer] pause() called');
+      audio.pause();
+      setState(prev => ({ ...prev, isPlaying: false }));
+    },
+  }), [isActive, isPoweredOn, onPlay, onError, stationId]);
 
   // ============================================================================
   // RECONNECTION LOGIC
@@ -120,38 +266,80 @@ export default function SecureAudioPlayer({
   // EFFECTS
   // ============================================================================
 
-  // Handle active state changes
+  // Prepare audio source when component mounts or station changes
   useEffect(() => {
+    console.log('[SecureAudioPlayer] useEffect triggered', {
+      stationId,
+      isActive,
+      isPoweredOn,
+      hasAudio: !!audioRef.current
+    });
+
+    const audio = audioRef.current;
+    if (!audio) {
+      console.error('[SecureAudioPlayer] useEffect: audio element is null');
+      return;
+    }
+
     if (isActive && isPoweredOn) {
-      // Trigger playback
-      const audio = audioRef.current;
-      if (!audio) return;
+      console.log('[SecureAudioPlayer] Preparing audio for playback...');
 
-      // Initialize audio context on first interaction
-      if (!audioContextRef.current) {
-        const AudioContext = window.AudioContext || (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext;
-        const audioContext = new AudioContext();
-        audioContextRef.current = audioContext;
+      // Stop any existing playback first
+      audio.pause();
 
-        // Create source node
-        const source = audioContext.createMediaElementSource(audio);
-        sourceNodeRef.current = source;
+      // Cancel any existing animation frames
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = undefined;
+      }
 
-        // Create analyser for visualizer
-        const analyser = audioContext.createAnalyser();
-        analyser.fftSize = 256;
-        analyser.smoothingTimeConstant = 0.8;
-        analyserRef.current = analyser;
+      // Initialize audio context on first interaction (only once per component instance)
+      // IMPORTANT: Only create Web Audio API nodes ONCE per audio element
+      // MediaElementSourceNode can only be created ONCE per audio element, EVER
 
-        // Create gain node for volume control
-        const gainNode = audioContext.createGain();
-        gainNode.gain.value = state.volume;
-        gainNodeRef.current = gainNode;
+      if (!sourceNodeRef.current) {
+        console.log('[SecureAudioPlayer] Initializing Web Audio API for the first time');
 
-        // Connect: source -> analyser -> gain -> destination
-        source.connect(analyser);
-        analyser.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+        try {
+          const AudioContext = window.AudioContext || (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext;
+          const audioContext = new AudioContext();
+          audioContextRef.current = audioContext;
+
+          // Create source node - can only be created ONCE per audio element
+          console.log('[SecureAudioPlayer] Creating MediaElementSourceNode (once per audio element)');
+          const source = audioContext.createMediaElementSource(audio);
+          sourceNodeRef.current = source;
+
+          // Create analyser for visualizer
+          const analyser = audioContext.createAnalyser();
+          analyser.fftSize = 256;
+          analyser.smoothingTimeConstant = 0.8;
+          analyserRef.current = analyser;
+
+          // Create gain node for volume control
+          const gainNode = audioContext.createGain();
+          gainNode.gain.value = state.volume;
+          gainNodeRef.current = gainNode;
+
+          // Connect: source -> analyser -> gain -> destination
+          source.connect(analyser);
+          analyser.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+
+          console.log('[SecureAudioPlayer] ✅ Web Audio API initialized', {
+            audioContextState: audioContext.state,
+            sampleRate: audioContext.sampleRate,
+            gainValue: gainNode.gain.value
+          });
+        } catch (err) {
+          console.error('[SecureAudioPlayer] Failed to initialize Web Audio API:', err);
+          // Continue without Web Audio API features
+        }
+      } else {
+        console.log('[SecureAudioPlayer] Web Audio API already initialized, skipping', {
+          audioContextState: audioContextRef.current?.state,
+          hasSourceNode: !!sourceNodeRef.current
+        });
       }
 
       // Resume audio context if suspended
@@ -159,25 +347,53 @@ export default function SecureAudioPlayer({
         audioContextRef.current.resume();
       }
 
-      // Set source and play
+      // Set source but DON'T auto-play (play() will be called from ref)
       const streamUrl = `/api/stream/${stationId}`;
-      const fullUrl = new URL(streamUrl, window.location.origin).href;
 
-      // Only set src if it's different to avoid reloading
-      if (audio.src !== fullUrl) {
-        audio.src = streamUrl;
+      // Prevent double-loading from React Strict Mode
+      // Check if we're already loading this exact URL
+      if (audio.src === `http://localhost:3000${streamUrl}` || audio.src === streamUrl) {
+        console.log('[SecureAudioPlayer] Already loading this station, skipping duplicate load');
+        console.log('[SecureAudioPlayer] Current src:', audio.src, 'Target src:', streamUrl);
+        return;
       }
 
-      // Start playback
-      audio.play().catch((err) => {
-        console.error('[SecureAudioPlayer] Playback error:', err);
-        if (onError) onError(err instanceof Error ? err.message : 'Failed to play stream');
-      });
+      console.log('[SecureAudioPlayer] Setting audio source:', streamUrl);
+      isLoadingRef.current = true;
+      isReadyRef.current = false;
 
-      setState(prev => ({ ...prev, isPlaying: true, isLoading: false, hasInteracted: true }));
+      // Set up event listeners BEFORE setting src
+      const handleCanPlay = () => {
+        console.log('[SecureAudioPlayer] ✅ canplay event fired - audio is ready');
+        isReadyRef.current = true;
+        isLoadingRef.current = false;
+      };
+
+      const handleLoadedMetadata = () => {
+        console.log('[SecureAudioPlayer] ✅ loadedmetadata event fired');
+      };
+
+      const handleLoadStart = () => {
+        console.log('[SecureAudioPlayer] ⏳ loadstart event fired - starting to load');
+      };
+
+      const handleError = (e: Event) => {
+        console.error('[SecureAudioPlayer] ❌ error event fired:', (e.target as HTMLAudioElement).error);
+        isLoadingRef.current = false;
+        isReadyRef.current = false;
+      };
+
+      audio.addEventListener('canplay', handleCanPlay, { once: true });
+      audio.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
+      audio.addEventListener('loadstart', handleLoadStart, { once: true });
+      audio.addEventListener('error', handleError, { once: true });
+
+      audio.src = streamUrl;
+      audio.load(); // Explicitly load the new source
+      console.log('[SecureAudioPlayer] Audio source set and load() called. Waiting for canplay event...');
+
+      setState(prev => ({ ...prev, isLoading: false }));
       reconnectAttemptsRef.current = 0;
-
-      if (onPlay) onPlay();
 
       // Start visualizer updates
       if (analyserRef.current && onAudioData) {
@@ -195,22 +411,25 @@ export default function SecureAudioPlayer({
 
         updateData();
       }
-    } else if (!isActive || !isPoweredOn) {
-      // Stop playback
-      const audio = audioRef.current;
-      if (audio) {
-        audio.pause();
-        audio.src = '';
-      }
+    } else {
+      // Stop playback immediately when not active or powered off
+      console.log('[SecureAudioPlayer] Component not active or powered off, pausing audio');
+      audio.pause();
+      // Don't clear src here - it causes "Empty src attribute" errors
+      // The component will be unmounted anyway if not active
 
       setState(prev => ({ ...prev, isPlaying: false, isLoading: false }));
 
+      // Cancel animation frame
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = undefined;
       }
 
+      // Clear reconnect timeout
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = undefined;
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -218,18 +437,13 @@ export default function SecureAudioPlayer({
 
   // Cleanup on unmount
   useEffect(() => {
-    // Capture ref values for cleanup
-    const audio = audioRef.current;
-    const animationFrame = animationFrameRef.current;
-    const reconnectTimeout = reconnectTimeoutRef.current;
-    const audioContext = audioContextRef.current;
-
+    // Return cleanup function that will run when component unmounts
     return () => {
-      // Stop audio
-      if (audio) {
-        audio.pause();
-        audio.src = '';
-      }
+      console.log('[SecureAudioPlayer] Cleanup running for station:', stationId);
+
+      // Get current ref values at cleanup time (not mount time)
+      const animationFrame = animationFrameRef.current;
+      const reconnectTimeout = reconnectTimeoutRef.current;
 
       // Cancel animation frame
       if (animationFrame) {
@@ -241,12 +455,13 @@ export default function SecureAudioPlayer({
         clearTimeout(reconnectTimeout);
       }
 
-      // Close audio context
-      if (audioContext) {
-        audioContext.close();
-      }
+      // NOTE: We do NOT close the AudioContext or pause the audio here
+      // The Web Audio API nodes (AudioContext, MediaElementSourceNode) are created ONCE
+      // and kept alive for the entire component lifetime
+      // Closing them causes issues with React Strict Mode remounts
+      console.log('[SecureAudioPlayer] Cleanup complete (Web Audio API nodes kept alive)');
     };
-  }, []); // Only run on mount/unmount
+  }, [stationId]); // Include stationId so cleanup knows which station it's for
 
   // ============================================================================
   // RENDER
@@ -273,7 +488,13 @@ export default function SecureAudioPlayer({
       )}
     </>
   );
-}
+});
+
+// ============================================================================
+// EXPORT
+// ============================================================================
+
+export default SecureAudioPlayer;
 
 // ============================================================================
 // EXPORT HOOK FOR EXTERNAL CONTROL
@@ -281,7 +502,7 @@ export default function SecureAudioPlayer({
 
 export function useAudioPlayer() {
   const [audioData, setAudioData] = useState<Uint8Array>(new Uint8Array(128));
-  
+
   return {
     audioData,
     setAudioData,

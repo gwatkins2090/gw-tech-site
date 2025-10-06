@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, Radio, Zap, Waves, Power } from 'lucide-react';
 import Link from 'next/link';
 import { radioStations, type RadioStation } from '@/data/radio-stations';
-import SecureAudioPlayer from '@/components/radio/SecureAudioPlayer';
+import SecureAudioPlayer, { type SecureAudioPlayerHandle } from '@/components/radio/SecureAudioPlayer';
 
 const stations = radioStations;
 
@@ -16,6 +16,7 @@ export default function StationsPage() {
   const [isWarming, setIsWarming] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
   const [audioData, setAudioData] = useState<Uint8Array>(new Uint8Array(128));
+  const audioPlayerRef = useRef<SecureAudioPlayerHandle>(null);
 
   // Update audio levels from real audio data
   useEffect(() => {
@@ -42,9 +43,26 @@ export default function StationsPage() {
   };
 
   const handleStationSelect = (station: RadioStation, index: number) => {
+    console.log('[StationsPage] handleStationSelect called', {
+      stationId: station.id,
+      stationName: station.name,
+      isOn,
+      index
+    });
+
     if (isOn) {
+      console.log('[StationsPage] Radio is ON, selecting station...');
       setSelectedStation(station);
       setDialPosition((index / (stations.length - 1)) * 100);
+
+      // Trigger playback in the next tick to ensure component is mounted
+      setTimeout(() => {
+        console.log('[StationsPage] Calling audioPlayerRef.current?.play()');
+        console.log('[StationsPage] audioPlayerRef.current exists?', !!audioPlayerRef.current);
+        audioPlayerRef.current?.play();
+      }, 0);
+    } else {
+      console.warn('[StationsPage] Radio is OFF, cannot select station');
     }
   };
 
@@ -389,17 +407,18 @@ export default function StationsPage() {
         </motion.div>
       </div>
 
-      {/* Audio Players - Hidden but functional */}
-      {stations.map((station) => (
+      {/* Audio Player - Only render when a station is selected */}
+      {selectedStation && (
         <SecureAudioPlayer
-          key={station.id}
-          stationId={station.id}
-          isActive={selectedStation?.id === station.id}
+          ref={audioPlayerRef}
+          key={selectedStation.id}
+          stationId={selectedStation.id}
+          isActive={true}
           isPoweredOn={isOn}
           onAudioData={setAudioData}
-          onError={(error) => console.error(`Station ${station.id} error:`, error)}
+          onError={(error) => console.error(`Station ${selectedStation.id} error:`, error)}
         />
-      ))}
+      )}
     </div>
   );
 }
